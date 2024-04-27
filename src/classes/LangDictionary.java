@@ -24,6 +24,10 @@ public class LangDictionary {
     }
 
     public void ReadAllDict() {
+        if (dictionary.isEmpty()) {
+            System.out.println("Словарь пустой");
+            return;
+        }
         for (Map.Entry<String, String> entry : dictionary.entrySet()) {
             String key = entry.getKey();
             String value = entry.getValue();
@@ -56,10 +60,24 @@ public class LangDictionary {
     }
 
     public void AddNewWord(String key, String value) {
-
+        String line = key + " - " + value;
+        rwManager.Writer(line);
+        dictionary.put(key, value);
     }
 
     public void DeleteWord(String word) {
-
+        String key;
+        if (dictionary.containsKey(word)) {
+            key = word;
+        }
+        else if (dictionary.containsValue(word)) {
+            key = FindKey(word);
+        } else {
+            System.out.println("Слово " + word + " не найдено.");
+            return;
+        }
+        String line = key + " - " + dictionary.get(key);
+        rwManager.DeleteLine(line);
+        dictionary.remove(key);
     }
 }

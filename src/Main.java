@@ -43,9 +43,13 @@ public class Main {
                 case 3:
                     System.out.println("Формат добавления слова:");
                     System.out.println("<word> : <translateWord>");
-                    String[] line = scanner.next().split(" : ");
-                    String key = line[0], value = line[1];
-                    dictionary.AddNewWord(key, value);
+                    if (scanner.hasNextLine()) {
+                        scanner.nextLine();
+                        String line = scanner.nextLine();
+                        String[] words = line.split(" : ");
+                        String key = words[0], value = words[1];
+                        dictionary.AddNewWord(key, value);
+                    }
                     break;
                 case 4:
                     word = scanner.next();
