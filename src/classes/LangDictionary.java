@@ -2,16 +2,18 @@ package classes;
 
 import java.util.*;
 
-public class LangDictionary {
+public abstract class LangDictionary {
     private final RWManager rwManager;
-    private String fileName = "src\\resourses\\dict.txt";
     private Map<String, String> dictionary;
 
     public LangDictionary() {
-        rwManager = new RWManager(fileName);
+        rwManager = new RWManager(getFile());
         List<String> list = rwManager.Reader();
         dictionary = ConvertToDict(list);
     }
+
+    public abstract String getFile();
+    public abstract String getRegex();
 
     private Map<String, String> ConvertToDict(List<String> list) {
         Map<String, String> dict = new HashMap<>();
@@ -60,17 +62,21 @@ public class LangDictionary {
     }
 
     public void AddNewWord(String key, String value) {
-        String line = key + " - " + value;
-        rwManager.Writer(line);
-        dictionary.put(key, value);
+        if (key.matches(getRegex())) {
+            String line = key + " - " + value;
+            dictionary.put(key, value);
+            rwManager.Writer(line);
+        }
+        else printInfoFormat();
     }
+
+    public abstract void printInfoFormat();
 
     public void DeleteWord(String word) {
         String key;
         if (dictionary.containsKey(word)) {
             key = word;
-        }
-        else if (dictionary.containsValue(word)) {
+        } else if (dictionary.containsValue(word)) {
             key = FindKey(word);
         } else {
             System.out.println("Слово " + word + " не найдено.");

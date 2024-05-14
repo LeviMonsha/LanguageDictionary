@@ -5,13 +5,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class RWManager {
-    private final String fileName;
+    private String fileName;
 
     public RWManager(String fn) {
         fileName = fn;
         File file = new File(fileName);
         if (!file.exists()) {
-            System.out.println("Dictionary is not exist");
+            System.out.println("Словаря не существует");
         }
     }
 
@@ -38,8 +38,8 @@ public class RWManager {
     }
     public void Writer(String line) {
         try {
-            FileWriter writer = new FileWriter(fileName);
-            writer.write(line);
+            FileWriter writer = new FileWriter(fileName, true);
+            writer.write(line + "\n");
             writer.close();
 
             System.out.println("Строка успешно записана в файл.");
@@ -51,7 +51,7 @@ public class RWManager {
     public void DeleteLine(String line) {
         try {
             File inputFile = new File(fileName);
-            File tempFile = new File("dict.txt");
+            File tempFile = new File(fileName.split("\\\\")[2]);
 
             BufferedReader reader = new BufferedReader(new FileReader(inputFile));
             BufferedWriter writer = new BufferedWriter(new FileWriter(tempFile));
@@ -63,7 +63,7 @@ public class RWManager {
                 if (currentLine.equals(line)) {
                     continue;
                 }
-                writer.write(currentLine + System.getProperty("line.separator"));
+                writer.write(currentLine + "\n");
             }
 
             writer.close();
