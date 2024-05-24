@@ -7,10 +7,11 @@ import java.util.Scanner;
 
 public class InputHandler {
     private static boolean blUpdate = true;
+    private static boolean isRunning = true;
     private static LangDictionary dictionary;
     private static Scanner scanner = new Scanner(System.in);
 
-    private static void PrintInfoTask() {
+    private static void printInfoTask() {
         System.out.println("~~~~  TASK  ~~~~");
         System.out.println("(-1) Поменять словарь");
         System.out.println("(1) Просмотр словаря");
@@ -20,14 +21,14 @@ public class InputHandler {
         System.out.println("(27) Выход");
         System.out.println("~~~~~~~~~~~~~~~~");
     }
-    private static void PrintInfoDict() {
+    private static void printInfoDict() {
         System.out.println("~~~~  DICTIONARY  ~~~~");
         System.out.println("(0) латиница - кириллица");
         System.out.println("(1) цифра - кириллица");
     }
 
     private static void selectDict() {
-        PrintInfoDict();
+        printInfoDict();
         int value = inputValue();
         if (value == 0) dictionary = new LatinDict();
         else if (value == 1) dictionary = new DigitDict();
@@ -48,15 +49,32 @@ public class InputHandler {
     }
 
     public static void update() {
-        selectDict();
+        while (isRunning) {
+            try {
+                selectDict();
+                String path = getPathToFile();
 
-        while (blUpdate) {
-            Task();
+                while (blUpdate) {
+                    task();
+                }
+            } catch (Exception e) {
+
+            }
         }
     }
 
-    private static void Task() {
-        PrintInfoTask();
+    private static String getPathToFile() {
+        System.out.print("Введите путь к файлу: ");
+        String input = scanner.next();
+        if (!input.matches("^[a-zA-Z0-9]+$")) {
+            System.out.println("Только латинские буквы и цифры! ");
+            return getPathToFile();
+        }
+        return input;
+    }
+
+    private static void task() {
+        printInfoTask();
         String word;
         int keyHandler = inputValue();
 
