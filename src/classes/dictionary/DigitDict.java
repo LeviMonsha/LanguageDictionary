@@ -1,14 +1,21 @@
 package classes.dictionary;
 
-import classes.LangDictionary;
+import classes.RWManager;
+import classes.exception.ChooseFileDictonaryException;
 
-public class DigitDict extends LangDictionary {
-    private final String fileName = "src\\resourses\\DictDigit.txt";
+import java.io.IOException;
+
+public class DigitDict extends RWManager {
+//    private final String fileName = "src\\resourses\\DictDigit.txt";
     private final String REGEX = "[0-9]{5}";
 
+    public DigitDict(String filePath) throws ChooseFileDictonaryException, IOException {
+        super(filePath);
+    }
+
     @Override
-    public String getFile() {
-        return fileName;
+    public boolean isCorrectWord(String s) {
+        return s.matches(REGEX);
     }
 
     @Override

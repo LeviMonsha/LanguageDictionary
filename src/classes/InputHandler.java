@@ -2,14 +2,16 @@ package classes;
 
 import classes.dictionary.DigitDict;
 import classes.dictionary.LatinDict;
+import classes.exception.ChooseFileDictonaryException;
 
+import java.io.IOException;
 import java.util.Scanner;
 
 public class InputHandler {
     private static boolean blUpdate = true;
     private static boolean isRunning = true;
-    private static LangDictionary dictionary;
-    private static Scanner scanner = new Scanner(System.in);
+    private static RWManager dictManager;
+    private static final Scanner scanner = new Scanner(System.in);
 
     private static void printInfoTask() {
         System.out.println("~~~~  TASK  ~~~~");
@@ -27,14 +29,14 @@ public class InputHandler {
         System.out.println("(1) цифра - кириллица");
     }
 
-    private static void selectDict() {
+    private static void selectDict(String path) throws ChooseFileDictonaryException, IOException {
         printInfoDict();
         int value = inputValue();
-        if (value == 0) dictionary = new LatinDict();
-        else if (value == 1) dictionary = new DigitDict();
+        if (value == 0) dictManager = new LatinDict(path);
+        else if (value == 1) dictManager = new DigitDict(path);
         else {
-            System.out.println("Неверный ввод");
-            selectDict();
+            System.out.println("Неверный ввод!");
+            selectDict(path);
         }
     }
 
@@ -51,14 +53,15 @@ public class InputHandler {
     public static void update() {
         while (isRunning) {
             try {
-                selectDict();
                 String path = getPathToFile();
+                selectDict(path);
 
                 while (blUpdate) {
                     task();
                 }
             } catch (Exception e) {
-
+                System.out.println(e.getMessage());
+                update();
             }
         }
     }
@@ -75,38 +78,39 @@ public class InputHandler {
 
     private static void task() {
         printInfoTask();
-        String word;
         int keyHandler = inputValue();
-
-        switch (keyHandler) {
-            case 1 -> dictionary.ReadAllDict();
-            case 2 -> {
-                word = scanner.next();
-                dictionary.SearchWord(word);
-            }
-            case 3 -> {
-                System.out.println("Формат добавления слова:");
-                System.out.println("<word> : <translateWord>");
-                if (scanner.hasNextLine()) {
-                    scanner.nextLine();
-                    String line = scanner.nextLine();
-                    if (line.contains(" : ")) {
-                        String[] words = line.split(" : ");
-                        String key = words[0], value = words[1];
-                        dictionary.AddNewWord(key, value);
-                    }
-                    else System.out.println("Неверный формат для добавления слова");
+        try {
+            switch (keyHandler) {
+                case 1 -> System.out.println("{\n" + dictManager.readAllDict() + "\n}");
+                case 2 -> {
+                    System.out.print("Введите ключ: ");
+                    dictManager.searchWord(scanner.next());
                 }
+                case 3 -> {
+                    System.out.println("Формат добавления слова:");
+                    System.out.println("<word> : <translateWord>");
+                    if (scanner.hasNextLine()) {
+                        scanner.nextLine();
+                        String line = scanner.nextLine();
+                        if (line.contains(" : ")) {
+                            String[] words = line.split(" : ");
+                            String key = words[0], value = words[1];
+                            dictManager.addNewWord(key, value);
+                        }
+                        else System.out.println("Неверный формат для добавления слова");
+                    }
+                }
+                case 4 -> {
+                    System.out.print("Введите ключ: ");
+                    dictManager.deleteWord(scanner.next());
+                }
+                case -1 -> blUpdate = false;
+                case 27 -> isRunning = false;
+                default -> System.out.println("Такой функции не существует");
             }
-            case 4 -> {
-                word = scanner.next();
-                dictionary.DeleteWord(word);
-            }
-            case -1 -> selectDict();
-            case 27 -> blUpdate = false;
-            default -> {
-                System.out.println("Такой функции не существует");
-            }
+        } catch (Exception ex) {
+            System.out.println(ex.getMessage());
+            task();
         }
     }
 }
