@@ -60,14 +60,17 @@ public abstract class RWManager {
         if(dictionary.containsKey(wordEng)) {
             dictionary.remove(wordEng);
             writeToFile(getKeyValuesOfDict());
+            System.out.println("Ключ " + wordEng + " успешно удален");
             return true;
         }
         throw new KeyException("Ключ " + wordEng + " отсутствует");
     }
 
     public String searchWord(String wordEng) throws Exception {
-        if(dictionary.containsKey(wordEng))
+        if(dictionary.containsKey(wordEng)) {
+            System.out.println(wordEng + " : " + dictionary.get(wordEng));
             return dictionary.get(wordEng);
+        }
         throw new KeyException("Ключ " + wordEng + " отсутствует");
     }
 

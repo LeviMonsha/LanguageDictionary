@@ -38,6 +38,7 @@ public class InputHandler {
             System.out.println("Неверный ввод!");
             selectDict(path);
         }
+        blUpdate = true;
     }
 
     private static int inputValue() {
@@ -64,6 +65,7 @@ public class InputHandler {
                 update();
             }
         }
+        System.out.println("Выход...\nДо скорого!");
     }
 
     private static String getPathToFile() {
@@ -105,7 +107,7 @@ public class InputHandler {
                     dictManager.deleteWord(scanner.next());
                 }
                 case -1 -> blUpdate = false;
-                case 27 -> isRunning = false;
+                case 27 -> { blUpdate = false; isRunning = false; }
                 default -> System.out.println("Такой функции не существует");
             }
         } catch (Exception ex) {
